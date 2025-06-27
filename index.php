@@ -105,11 +105,11 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
         </div>
         <div class="mb-2">
           <span class="fw-bold">Pending:</span>
-          <span class="pending-chip"><?= $summary['pending'] ?></span>
+          <span class="pending-chip"><?= $summary['pending'] ?? 0 ?></span>
           <span class="fw-bold ms-3">Scheduled:</span>
-          <span class="sched-chip"><?= $summary['scheduled'] ?></span>
+          <span class="sched-chip"><?= $summary['scheduled'] ?? 0 ?></span>
           <span class="fw-bold ms-3">Overdue:</span>
-          <span class="od-chip"><?= $summary['overdue'] ?></span>
+          <span class="od-chip"><?= $summary['overdue'] ?? 0 ?></span>
         </div>
         <div class="tiny-tip mt-2">Click “Add Transaction” to resolve pending/overdue.</div>
       </div>
