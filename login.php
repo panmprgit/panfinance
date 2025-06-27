@@ -25,13 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-light">
-<div class="container">
-    <div class="row justify-content-center align-items-center" style="height:100vh;">
-        <div class="col-4">
-            <div class="card">
-                <div class="card-body">
+<body>
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="glass shadow-sm">
+                <div class="card-body p-4">
                     <h3 class="card-title">Finance Login</h3>
                     <?php if (!empty($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
                     <form method="post">
@@ -50,5 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </div>
+<script>
+if(localStorage.getItem('darkMode')==='1'){
+    document.body.classList.add('dark-mode');
+}
+</script>
 </body>
 </html>

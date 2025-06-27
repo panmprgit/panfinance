@@ -1,0 +1,43 @@
+body {
+  background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 100%);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+body.dark-mode {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #cbd5e1;
+}
+
+.glass {
+  background: rgba(255,255,255,0.86);
+  border-radius: 1.2em;
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.08);
+  padding: 1.5em 1.5em 2em;
+  margin-bottom: 2em;
+  backdrop-filter: blur(8px);
+}
+body.dark-mode .glass {
+  background: rgba(30,35,48,0.9);
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.45);
+}
+
+.form-control, .form-select {
+  border-radius: 0.8rem;
+  border: 1.8px solid #d1d5db;
+  box-shadow: none !important;
+}
+body.dark-mode .form-control, body.dark-mode .form-select {
+  background: #15202b;
+  border-color: #475569;
+  color: #e0e7ff;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg,#4f46e5,#0ea5e9);
+  border: none;
+}
+.btn-primary:hover {
+  background: linear-gradient(90deg,#4338ca,#0284c7);
+}
+
+.min-vh-100 { min-height: 100vh; }
