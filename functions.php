@@ -78,12 +78,12 @@ function get_account_by_id($uid, $bank_id) {
 }
 function add_account($uid, $data) {
     $pdo = get_db();
-    $stmt = $pdo->prepare("INSERT INTO finance_banks (user_id, name, type, balance) VALUES (?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO finance_banks (user_id, name, type, balance, last_updated) VALUES (?, ?, ?, ?, NOW())");
     $stmt->execute([$uid, $data['name'], $data['type'], $data['balance']]);
 }
 function update_account($uid, $id, $data) {
     $pdo = get_db();
-    $stmt = $pdo->prepare("UPDATE finance_banks SET name=?, type=?, balance=? WHERE user_id=? AND id=?");
+    $stmt = $pdo->prepare("UPDATE finance_banks SET name=?, type=?, balance=?, last_updated=NOW() WHERE user_id=? AND id=?");
     $stmt->execute([$data['name'], $data['type'], $data['balance'], $uid, $id]);
 }
 function delete_account($uid, $id) {
@@ -198,7 +198,7 @@ function update_account_balance_for_transaction($bank_id, $amount, $type, $alrea
         // For banks: income increases, expense decreases
         $delta = ($type == 'expense') ? -$amount : $amount;
     }
-    $pdo->prepare("UPDATE finance_banks SET balance = balance + ? WHERE id=?")->execute([$delta, $bank_id]);
+    $pdo->prepare("UPDATE finance_banks SET balance = balance + ?, last_updated=NOW() WHERE id=?")->execute([$delta, $bank_id]);
 }
 
 // ---- RECURRING ----
