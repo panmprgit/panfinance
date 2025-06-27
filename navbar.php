@@ -57,17 +57,19 @@ function nav_active($file) { global $page; return $page == $file ? "active" : ""
 
 <style>
 .glassy-navbar {
-  background: rgba(255, 255, 255, 0.45);
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%);
   backdrop-filter: saturate(180%) blur(15px);
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.08);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
   transition: background-color 0.3s ease;
   padding: 0.4rem 1rem;
   user-select:none;
   z-index: 1030;
 }
 body.dark-mode .glassy-navbar {
-  background: rgba(18, 25, 42, 0.75);
+  background: linear-gradient(135deg, rgba(30,35,48,0.95) 0%, rgba(18,25,42,0.8) 100%);
   box-shadow: 0 8px 28px rgb(0 0 0 / 0.7);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   color: #cbd5e1;
 }
 
@@ -85,23 +87,35 @@ body.dark-mode .navbar-brand {
   font-weight: 900;
   letter-spacing: -0.03em;
   color: inherit;
+  background: linear-gradient(90deg,#22c55e,#4ade80);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body.dark-mode .app-name {
+  background: linear-gradient(90deg,#4ade80,#bbf7d0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .nav-link {
   font-weight: 600;
   color: #374151;
-  padding: 0.4rem 0.75rem;
-  transition: color 0.2s ease;
+  padding: 0.4rem 0.85rem;
+  border-radius: 0.6rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 body.dark-mode .nav-link {
   color: #94a3b8;
 }
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
+  background-color: rgba(34,197,94,0.15);
   color: #22c55e;
   font-weight: 700;
 }
 body.dark-mode .nav-link:hover,
 body.dark-mode .nav-link.active {
+  background-color: rgba(74,222,128,0.18);
   color: #4ade80;
 }
 
