@@ -57,14 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <style>
 body {
-    background: linear-gradient(120deg, #f8fafc 0%, #dbeafe 100%);
+    background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%);
     font-family: 'Inter', sans-serif;
     color: #111827;
     min-height: 100vh;
 }
 body.dark-mode {
-    background: linear-gradient(120deg,#1a2130 0%, #223045 100%);
-    color: #e5e5e5;
+    background: linear-gradient(135deg,#161b22 0%,#222a3f 100%);
+    color: #ddd;
 }
 .container {
     max-width: 650px;
@@ -72,16 +72,17 @@ body.dark-mode {
     padding-bottom: 3rem;
 }
 .glass-card {
-    background: rgba(255, 255, 255, 0.65);
-    border-radius: 1.5rem;
+    background: rgba(255,255,255,0.92);
+    border-radius: 1.2em;
     padding: 2.5rem 2.5rem 3rem;
-    box-shadow: 0 8px 32px rgb(0 0 0 / 0.12);
+    box-shadow: 0 4px 24px rgb(0 0 0 / 0.08);
     backdrop-filter: blur(8px);
     transition: box-shadow 0.3s ease, background 0.3s ease;
+    margin-bottom: 2em;
 }
 body.dark-mode .glass-card {
-    background: rgba(36, 42, 65, 0.85);
-    box-shadow: 0 10px 36px rgb(0 0 0 / 0.6);
+    background: rgba(30, 35, 48, 0.93);
+    box-shadow: 0 4px 24px rgb(0 0 0 / 0.32);
 }
 h1 {
     font-weight: 900;
