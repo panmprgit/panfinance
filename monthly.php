@@ -71,19 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'already_in_balance' => isset($_POST['already_in_balance']) ? 1 : 0
         ];
         add_transaction($_SESSION['user_id'], $data);
-        update_account_balance_for_transaction($data['bank_id'], $data['amount'], $data['type'], $data['already_in_balance']);
         header("Location: monthly.php?month=$thisMonth&bank_id=$filter_bank"); exit;
     }
     // EDIT transaction
     if (isset($_POST['edit_trans'])) {
-        $pdo = get_db();
-        $old = $pdo->prepare("SELECT * FROM finance_transactions WHERE id=? AND user_id=?");
-        $old->execute([$_POST['id'], $_SESSION['user_id']]);
-        $old_tr = $old->fetch(PDO::FETCH_ASSOC);
-        if ($old_tr && !$old_tr['already_in_balance']) {
-            // Revert the old transaction effect
-            update_account_balance_for_transaction($old_tr['bank_id'], -$old_tr['amount'], $old_tr['type'], $old_tr['already_in_balance']);
-        }
         $data = [
             'bank_id' => $_POST['bank_id'],
             'date' => $_POST['date'],
@@ -93,18 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'already_in_balance' => isset($_POST['already_in_balance']) ? 1 : 0
         ];
         update_transaction($_SESSION['user_id'], $_POST['id'], $data);
-        update_account_balance_for_transaction($data['bank_id'], $data['amount'], $data['type'], $data['already_in_balance']);
         header("Location: monthly.php?month=$thisMonth&bank_id=$filter_bank"); exit;
     }
     // DELETE transaction
     if (isset($_POST['delete_trans'])) {
-        $pdo = get_db();
-        $old = $pdo->prepare("SELECT * FROM finance_transactions WHERE id=? AND user_id=?");
-        $old->execute([$_POST['id'], $_SESSION['user_id']]);
-        $old_tr = $old->fetch(PDO::FETCH_ASSOC);
-        if ($old_tr && !$old_tr['already_in_balance']) {
-            update_account_balance_for_transaction($old_tr['bank_id'], -$old_tr['amount'], $old_tr['type'], $old_tr['already_in_balance']);
-        }
         delete_transaction($_SESSION['user_id'], $_POST['id']);
         header("Location: monthly.php?month=$thisMonth&bank_id=$filter_bank"); exit;
     }

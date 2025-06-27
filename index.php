@@ -5,6 +5,7 @@ date_default_timezone_set('Europe/Berlin');
 
 // Get summary and data
 $user_id = $_SESSION['user_id'];
+$userF = async_get_user($user_id);
 $thisMonth = isset($_GET['month']) ? $_GET['month'] : date('Y-m');
 $summaryF = async_get_monthly_summary($user_id, $thisMonth);
 $scoreF = async_get_health_score($user_id);
@@ -16,6 +17,7 @@ $recentF = async_get_transactions($user_id, $thisMonth, null, 6);
 $summary = $summaryF->await();
 $score = $scoreF->await();
 $payoff = $payoffF->await();
+$user = $userF->await();
 $accounts = $accountsF->await();
 list($totals, $computed, $banks) = $balancesF->await();
 $categories = $summary['categories'];
@@ -132,7 +134,7 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
     <div class="col-md-4">
       <div class="glass">
         <div class="mb-2 fw-bold">Credit Card Payoff Plan</div>
-        <form method="post" action="" class="mb-2 d-flex align-items-center">
+        <form method="post" id="planForm" action="" class="mb-2 d-flex align-items-center">
           <label class="me-2">Pay off in</label>
           <select name="pay_plan" id="pay_plan" class="form-select form-select-sm w-auto" onchange="document.getElementById('planForm').submit()">
             <?php for($i=1;$i<=12;$i++): ?>
