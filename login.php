@@ -1,5 +1,6 @@
 <?php
 require_once 'db.php';
+require_once 'future.php';
 session_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
