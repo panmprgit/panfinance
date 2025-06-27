@@ -3,15 +3,21 @@ require_once 'functions.php';
 require_login();
 date_default_timezone_set('Europe/Berlin');
 
-$user = get_user($_SESSION['user_id']);
-$bank_list = get_accounts($_SESSION['user_id']);
+$userF = async_get_user($_SESSION['user_id']);
+$bankListF = async_get_accounts($_SESSION['user_id']);
+$user = $userF->await();
+$bank_list = $bankListF->await();
 $filter_bank = isset($_GET['bank_id']) ? intval($_GET['bank_id']) : 0;
-$default_bank = intval(get_setting($_SESSION['user_id'], 'default_bank', 0));
-$all_descriptions = get_all_descriptions($_SESSION['user_id']);
+$defaultBankF = async(fn() => get_setting($_SESSION['user_id'], 'default_bank', 0));
+$default_bank = intval($defaultBankF->await());
+$descF = async(fn() => get_all_descriptions($_SESSION['user_id']));
+$all_descriptions = $descF->await();
 
 $thisMonth = isset($_GET['month']) && preg_match('/^\d{4}-\d{2}$/', $_GET['month']) ? $_GET['month'] : date('Y-m');
-$transactions = get_transactions($_SESSION['user_id'], $thisMonth, $filter_bank);
-$recurrings = get_recurring($_SESSION['user_id']);
+$transactionsF = async_get_transactions($_SESSION['user_id'], $thisMonth, $filter_bank);
+$recurringsF = async(fn() => get_recurring($_SESSION['user_id']));
+$transactions = $transactionsF->await();
+$recurrings = $recurringsF->await();
 
 // Recurring add/edit/delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

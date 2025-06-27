@@ -3,11 +3,15 @@ require_once 'functions.php';
 require_login();
 date_default_timezone_set('Europe/Berlin');
 
-$user = get_user($_SESSION['user_id']);
-$accounts = get_accounts($_SESSION['user_id']);
+$userF = async_get_user($_SESSION['user_id']);
+$accountsF = async_get_accounts($_SESSION['user_id']);
+$user = $userF->await();
+$accounts = $accountsF->await();
 
-$default_bank = intval(get_setting($_SESSION['user_id'], 'default_bank', 0));
-$dark_mode = get_setting($_SESSION['user_id'], 'dark_mode', '0');
+$defaultBankF = async(fn() => get_setting($_SESSION['user_id'], 'default_bank', 0));
+$darkModeF = async(fn() => get_setting($_SESSION['user_id'], 'dark_mode', '0'));
+$default_bank = intval($defaultBankF->await());
+$dark_mode = $darkModeF->await();
 
 $messages = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
