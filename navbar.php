@@ -31,6 +31,7 @@ function nav_active($file) { global $page; return $page == $file ? "active" : ""
         <button class="btn btn-outline-secondary btn-sm" title="Notifications (coming soon)" style="pointer-events:none;opacity:.7;">
           <i class="bi bi-bell"></i>
         </button>
+        <button class="btn btn-outline-secondary btn-sm" id="darkToggle" title="Toggle dark mode">🌙</button>
         <div class="dropdown">
           <a class="d-flex align-items-center text-decoration-none dropdown-toggle user-dropdown" href="#" id="dropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="user-avatar"><?= $user ? strtoupper(substr($user['username'],0,1)) : '?' ?></span>
@@ -245,6 +246,13 @@ document.addEventListener('DOMContentLoaded', function(){
     document.body.classList.add('dark-mode');
   } else {
     document.body.classList.remove('dark-mode');
+  }
+  var btn = document.getElementById('darkToggle');
+  if(btn){
+    btn.addEventListener('click', function(){
+      var active = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('darkMode', active ? '1' : '0');
+    });
   }
 });
 </script>

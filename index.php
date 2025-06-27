@@ -13,6 +13,7 @@ $payoffF = async_get_card_payoff_plan($user_id);
 $accountsF = async_get_accounts($user_id);
 $balancesF = async_get_all_balances($user_id);
 $recentF = async_get_transactions($user_id, $thisMonth, null, 6);
+$upcomingF = async_get_upcoming_recurring($user_id, 7);
 
 $summary = $summaryF->await();
 $score = $scoreF->await();
@@ -23,6 +24,7 @@ list($totals, $computed, $banks) = $balancesF->await();
 $categories = $summary['categories'];
 $biggest_cat = $summary['biggest'];
 $recent = $recentF->await();
+$upcoming = $upcomingF->await();
 
 // For Chart.js
 $cat_labels = json_encode(array_keys($categories));
@@ -159,6 +161,26 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Upcoming Recurring Transactions -->
+  <div class="glass mb-4">
+    <h5 class="fw-bold mb-3">Upcoming Recurring</h5>
+    <?php if(count($upcoming)): ?>
+    <ul class="mb-0 list-unstyled">
+      <?php foreach($upcoming as $u): ?>
+      <li>
+        <span class="me-2 fw-bold"><?= htmlspecialchars($u['date']) ?></span>
+        <span class="me-2"><?= htmlspecialchars($u['description']) ?></span>
+        <span class="<?= $u['type']=='income' ? 'text-success' : 'text-danger' ?> fw-bold">
+          <?= $u['type']=='income' ? '+' : '-' ?><?= number_format($u['amount'],2) ?>€
+        </span>
+      </li>
+      <?php endforeach; ?>
+    </ul>
+    <?php else: ?>
+    <p class="text-muted mb-0">No upcoming recurring transactions.</p>
+    <?php endif; ?>
   </div>
 
   <!-- Financial Advisor Widget -->
