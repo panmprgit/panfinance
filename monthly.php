@@ -91,6 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         delete_transaction($_SESSION['user_id'], $_POST['id']);
         header("Location: monthly.php?month=$thisMonth&bank_id=$filter_bank"); exit;
     }
+    if (isset($_POST['duplicate_trans'])) {
+        duplicate_transaction($_SESSION['user_id'], $_POST['id']);
+        header("Location: monthly.php?month=$thisMonth&bank_id=$filter_bank"); exit;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -308,8 +312,12 @@ body.dark-mode .table tbody tr:hover {
       <?php endif; ?>
     </form>
 
+    <div class="mb-3">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search description...">
+    </div>
+
     <div class="table-responsive">
-      <table class="table align-middle">
+      <table class="table align-middle" id="transTable">
         <thead>
           <tr>
             <th>Date</th>
@@ -319,6 +327,7 @@ body.dark-mode .table tbody tr:hover {
             <th>Account</th>
             <th>Status</th>
             <th>Edit</th>
+            <th>Copy</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -354,6 +363,12 @@ body.dark-mode .table tbody tr:hover {
                 data-bs-toggle="modal"
                 data-bs-target="#editModal"
                 >Edit</button>
+            </td>
+            <td>
+              <form method="post" style="display:inline">
+                <input type="hidden" name="id" value="<?= $tr['id'] ?>" />
+                <button type="submit" name="duplicate_trans" class="btn btn-sm btn-secondary">Copy</button>
+              </form>
             </td>
             <td>
               <form method="post" style="display:inline" onsubmit="return confirm('Delete this transaction?')">
@@ -497,6 +512,15 @@ editModal.addEventListener('show.bs.modal', event => {
   document.getElementById('edit-type').value = button.getAttribute('data-type');
   document.getElementById('edit-bank').value = button.getAttribute('data-bank') || "";
   document.getElementById('edit-inbal').checked = button.getAttribute('data-inbal') == "1";
+});
+
+// search filter
+document.getElementById('searchInput').addEventListener('input', function(){
+  let q = this.value.toLowerCase();
+  document.querySelectorAll('#transTable tbody tr').forEach(tr => {
+    let desc = tr.children[1].textContent.toLowerCase();
+    tr.style.display = desc.includes(q) ? '' : 'none';
+  });
 });
 
 if(localStorage.getItem('darkMode')==='1'){

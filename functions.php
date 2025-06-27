@@ -337,6 +337,56 @@ function get_card_payoff_plan($uid) {
     ];
 }
 
+// ---- UPCOMING RECURRING ----
+function get_upcoming_recurring($uid, $days = 7) {
+    $recurrings = get_recurring($uid);
+    $upcoming = [];
+    $start = strtotime(date('Y-m-d'));
+    $end = strtotime("+{$days} days", $start);
+    for ($ts = $start; $ts <= $end; $ts += 86400) {
+        $date = date('Y-m-d', $ts);
+        $w = date('w', $ts); // 0 (Sun) - 6 (Sat)
+        $dom = intval(date('j', $ts));
+        foreach ($recurrings as $rec) {
+            if ($date < $rec['start_date']) continue;
+            if ($rec['end_date'] && $date > $rec['end_date']) continue;
+            if ($rec['days_of_week']) {
+                $dows = array_map('intval', explode(',', $rec['days_of_week']));
+                if (in_array($w, $dows)) {
+                    $upcoming[] = array_merge($rec, ['date' => $date]);
+                }
+            } elseif ($rec['day_of_month']) {
+                if (intval($rec['day_of_month']) === $dom) {
+                    $upcoming[] = array_merge($rec, ['date' => $date]);
+                }
+            } else {
+                if ($rec['start_date'] === $date) {
+                    $upcoming[] = array_merge($rec, ['date' => $date]);
+                }
+            }
+        }
+    }
+    usort($upcoming, function($a, $b) { return strcmp($a['date'], $b['date']); });
+    return $upcoming;
+}
+
+function duplicate_transaction($uid, $id, $new_date = null) {
+    $pdo = get_db();
+    $stmt = $pdo->prepare("SELECT * FROM finance_transactions WHERE user_id=? AND id=?");
+    $stmt->execute([$uid, $id]);
+    $tr = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$tr) return;
+    $data = [
+        'bank_id' => $tr['bank_id'],
+        'date' => $new_date ?: date('Y-m-d'),
+        'description' => $tr['description'],
+        'amount' => $tr['amount'],
+        'type' => $tr['type'],
+        'already_in_balance' => $tr['already_in_balance']
+    ];
+    add_transaction($uid, $data);
+}
+
 // ---- ESCAPE OUTPUT ----
 function h($s) { return htmlspecialchars($s, ENT_QUOTES); }
 
@@ -424,5 +474,9 @@ function async_get_card_payoff_plan(int $uid): Future {
 
 function async_get_all_balances(int $uid): Future {
     return async(fn() => get_all_balances($uid));
+}
+
+function async_get_upcoming_recurring(int $uid, int $days = 7): Future {
+    return async(fn() => get_upcoming_recurring($uid, $days));
 }
 ?>
