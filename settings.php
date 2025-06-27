@@ -55,17 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Settings — Finance</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
 <style>
-body {
-    background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%);
-    font-family: 'Inter', sans-serif;
-    color: #111827;
-    min-height: 100vh;
-}
-body.dark-mode {
-    background: linear-gradient(135deg,#161b22 0%,#222a3f 100%);
-    color: #ddd;
-}
 .container {
     max-width: 650px;
     padding-top: 2.5rem;

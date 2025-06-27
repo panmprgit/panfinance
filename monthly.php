@@ -104,29 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Monthly Transactions — Finance</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
 <style>
-body {
-  background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%);
-  font-family: 'Inter', sans-serif;
-  min-height:100vh;
-}
-body.dark-mode {
-  background: linear-gradient(135deg,#161b22 0%,#222a3f 100%);
-  color:#ddd;
-}
-.glass {
-  background: rgba(255,255,255,0.85);
-  border-radius: 1.2em;
-  box-shadow: 0 4px 24px rgb(0 0 0 / 0.08);
-  padding: 1.5em 1.5em 2em;
-  margin-bottom: 2em;
-  backdrop-filter: blur(6px);
-  transition: box-shadow 0.3s ease;
-}
-body.dark-mode .glass {
-  background: rgba(30, 35, 48, 0.85);
-  box-shadow: 0 4px 24px rgb(0 0 0 / 0.45);
-}
 .glass:hover {
   box-shadow: 0 8px 48px rgb(0 0 0 / 0.12);
 }

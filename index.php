@@ -51,12 +51,9 @@ $cat_values = json_encode(array_values($categories));
 <title>Dashboard — Finance</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%); font-family: 'Inter', sans-serif;}
-body.dark-mode { background: linear-gradient(135deg,#161b22 0%,#222a3f 100%); color:#ddd;}
-.glass { background: rgba(255,255,255,0.92); border-radius: 1.2em; box-shadow: 0 4px 24px rgb(0 0 0 / 0.08); padding: 1.5em 1.5em 2em; margin-bottom: 2em; backdrop-filter: blur(8px);}
-body.dark-mode .glass { background: rgba(30, 35, 48, 0.93); box-shadow: 0 4px 24px rgb(0 0 0 / 0.32);}
 .stat-card { min-width:160px; padding:1em 1.2em; border-radius:1em; display:flex; align-items:center; gap:.5em; margin:0 .75em .75em 0; box-shadow:0 2px 10px rgb(0 0 0 / 0.05); background:#fff; }
 body.dark-mode .stat-card { background:#1e293b; color:#e2e8f0; }
 .stat-icon { font-size:1.3rem; line-height:1; }
