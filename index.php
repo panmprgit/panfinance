@@ -43,7 +43,10 @@ body { background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%); font-family:
 body.dark-mode { background: linear-gradient(135deg,#161b22 0%,#222a3f 100%); color:#ddd;}
 .glass { background: rgba(255,255,255,0.92); border-radius: 1.2em; box-shadow: 0 4px 24px rgb(0 0 0 / 0.08); padding: 1.5em 1.5em 2em; margin-bottom: 2em; backdrop-filter: blur(8px);}
 body.dark-mode .glass { background: rgba(30, 35, 48, 0.93); box-shadow: 0 4px 24px rgb(0 0 0 / 0.32);}
-.widget { min-width:160px; padding:1em 1.2em; border-radius:1em; display:inline-block; margin:0 1em 1em 0; box-shadow:0 2px 10px #0001;}
+.stat-card { min-width:160px; padding:1em 1.2em; border-radius:1em; display:flex; align-items:center; gap:.5em; margin:0 .75em .75em 0; box-shadow:0 2px 10px rgb(0 0 0 / 0.05); background:#fff; }
+body.dark-mode .stat-card { background:#1e293b; color:#e2e8f0; }
+.stat-icon { font-size:1.3rem; line-height:1; }
+.list-group-transparent .list-group-item { background:transparent; border:none; padding:.35em 0; }
 .dashboard-header { display: flex; flex-wrap:wrap; gap: 2em; align-items: center;}
 @media (max-width: 900px) { .dashboard-header { flex-direction:column; gap:1em;}.glass{padding:1em;} }
 .score-badge { font-size:1.5em; font-weight:bold; border-radius:1em; background:linear-gradient(90deg,#4ade80 30%,#22d3ee 100%); color:#191a2b; padding:.4em 1.4em; display:inline-block; box-shadow:0 0 8px #00f2;}
@@ -70,19 +73,30 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
         <span class="score-badge" title="Financial Health Score"><?= $score ?>/100</span>
         <span class="tiny-tip ms-2">AI-based health of your finances</span>
       </div>
-      <div class="mt-2">
-        <span class="widget bg-white shadow-sm">
-          <span class="fw-bold">Income:</span> <span class="text-success">+<?= number_format($summary['income'],2) ?>€</span>
-        </span>
-        <span class="widget bg-white shadow-sm">
-          <span class="fw-bold">Expense:</span> <span class="text-danger">-<?= number_format($summary['expense'],2) ?>€</span>
-        </span>
-        <span class="widget bg-white shadow-sm">
-          <span class="fw-bold">Net:</span>
-          <span class="<?= $summary['net'] >= 0 ? 'text-success' : 'text-danger' ?>">
-            <?= ($summary['net'] >= 0 ? '+' : '') . number_format($summary['net'],2) ?>€
-          </span>
-        </span>
+      <div class="d-flex flex-wrap gap-2 mt-2">
+        <div class="stat-card">
+          <span class="stat-icon text-success">⬆️</span>
+          <div>
+            <div class="small fw-bold text-uppercase">Income</div>
+            <div class="text-success fw-bold">+<?= number_format($summary['income'],2) ?>€</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon text-danger">⬇️</span>
+          <div>
+            <div class="small fw-bold text-uppercase">Expense</div>
+            <div class="text-danger fw-bold">-<?= number_format($summary['expense'],2) ?>€</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon <?= $summary['net'] >= 0 ? 'text-success' : 'text-danger' ?>">💰</span>
+          <div>
+            <div class="small fw-bold text-uppercase">Net</div>
+            <div class="<?= $summary['net'] >= 0 ? 'text-success' : 'text-danger' ?> fw-bold">
+              <?= ($summary['net'] >= 0 ? '+' : '') . number_format($summary['net'],2) ?>€
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div>
@@ -167,11 +181,13 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
   <div class="glass mb-4">
     <h5 class="fw-bold mb-3">Upcoming Recurring</h5>
     <?php if(count($upcoming)): ?>
-    <ul class="mb-0 list-unstyled">
+    <ul class="list-group list-group-transparent mb-0">
       <?php foreach($upcoming as $u): ?>
-      <li>
-        <span class="me-2 fw-bold"><?= htmlspecialchars($u['date']) ?></span>
-        <span class="me-2"><?= htmlspecialchars($u['description']) ?></span>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <span class="me-2 fw-bold"><?= htmlspecialchars($u['date']) ?></span>
+          <span><?= htmlspecialchars($u['description']) ?></span>
+        </div>
         <span class="<?= $u['type']=='income' ? 'text-success' : 'text-danger' ?> fw-bold">
           <?= $u['type']=='income' ? '+' : '-' ?><?= number_format($u['amount'],2) ?>€
         </span>
