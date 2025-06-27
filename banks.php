@@ -3,8 +3,10 @@ require_once 'functions.php';
 require_login();
 date_default_timezone_set('Europe/Berlin');
 
-$user = get_user($_SESSION['user_id']);
-$bank_list = get_accounts($_SESSION['user_id']);
+$userF = async_get_user($_SESSION['user_id']);
+$bankListF = async_get_accounts($_SESSION['user_id']);
+$user = $userF->await();
+$bank_list = $bankListF->await();
 
 // Add bank/card
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

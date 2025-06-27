@@ -6,14 +6,21 @@ date_default_timezone_set('Europe/Berlin');
 // Get summary and data
 $user_id = $_SESSION['user_id'];
 $thisMonth = isset($_GET['month']) ? $_GET['month'] : date('Y-m');
-$summary = get_monthly_summary($user_id, $thisMonth);
-$score = get_health_score($user_id);
-$payoff = get_card_payoff_plan($user_id);
-$accounts = get_accounts($user_id);
-list($totals, $computed, $banks) = get_all_balances($user_id);
+$summaryF = async_get_monthly_summary($user_id, $thisMonth);
+$scoreF = async_get_health_score($user_id);
+$payoffF = async_get_card_payoff_plan($user_id);
+$accountsF = async_get_accounts($user_id);
+$balancesF = async_get_all_balances($user_id);
+$recentF = async_get_transactions($user_id, $thisMonth, null, 6);
+
+$summary = $summaryF->await();
+$score = $scoreF->await();
+$payoff = $payoffF->await();
+$accounts = $accountsF->await();
+list($totals, $computed, $banks) = $balancesF->await();
 $categories = $summary['categories'];
 $biggest_cat = $summary['biggest'];
-$recent = get_transactions($user_id, $thisMonth, null, false, 6);
+$recent = $recentF->await();
 
 // For Chart.js
 $cat_labels = json_encode(array_keys($categories));

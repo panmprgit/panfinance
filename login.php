@@ -4,9 +4,12 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $stmt = $pdo->prepare("SELECT * FROM finance_users WHERE username = ?");
-    $stmt->execute([$username]);
-    $user = $stmt->fetch();
+    $userF = async(function() use ($pdo, $username) {
+        $stmt = $pdo->prepare("SELECT * FROM finance_users WHERE username = ?");
+        $stmt->execute([$username]);
+        return $stmt->fetch();
+    });
+    $user = $userF->await();
     if ($user && password_verify($password, $user['password_hash'])) {
         $_SESSION['user_id'] = $user['id'];
         header('Location: index.php');

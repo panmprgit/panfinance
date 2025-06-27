@@ -1,4 +1,5 @@
 <?php
+require_once 'future.php';
 // Enable error reporting (disable in production)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -394,5 +395,34 @@ if (isset($_GET['api'])) {
         echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
     }
     exit();
+}
+
+// ---- ASYNC WRAPPERS ----
+function async_get_user(int $uid): Future {
+    return async(fn() => get_user($uid));
+}
+
+function async_get_accounts(int $uid): Future {
+    return async(fn() => get_accounts($uid));
+}
+
+function async_get_transactions(int $uid, ?string $month = null, ?int $bank_id = null, ?int $limit = null): Future {
+    return async(fn() => get_transactions($uid, $month, $bank_id, $limit));
+}
+
+function async_get_monthly_summary(int $uid, ?string $month = null): Future {
+    return async(fn() => get_monthly_summary($uid, $month));
+}
+
+function async_get_health_score(int $uid): Future {
+    return async(fn() => get_health_score($uid));
+}
+
+function async_get_card_payoff_plan(int $uid): Future {
+    return async(fn() => get_card_payoff_plan($uid));
+}
+
+function async_get_all_balances(int $uid): Future {
+    return async(fn() => get_all_balances($uid));
 }
 ?>
