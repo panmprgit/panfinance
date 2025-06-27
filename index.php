@@ -14,9 +14,11 @@ $accountsF = async_get_accounts($user_id);
 $balancesF = async_get_all_balances($user_id);
 $recentF = async_get_transactions($user_id, $thisMonth, null, 6);
 $upcomingF = async_get_upcoming_recurring($user_id, 7);
+$adviceF = async_get_ai_advice($user_id);
 
 $summary = $summaryF->await();
 $score = $scoreF->await();
+$scoreColor = $score > 70 ? 'success' : ($score > 40 ? 'warning' : 'danger');
 $payoff = $payoffF->await();
 $user = $userF->await();
 $accounts = $accountsF->await();
@@ -25,6 +27,7 @@ $categories = $summary['categories'];
 $biggest_cat = $summary['biggest'];
 $recent = $recentF->await();
 $upcoming = $upcomingF->await();
+$advice = $adviceF->await();
 
 // For Chart.js
 $cat_labels = json_encode(array_keys($categories));
@@ -72,6 +75,10 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
       <div>
         <span class="score-badge" title="Financial Health Score"><?= $score ?>/100</span>
         <span class="tiny-tip ms-2">AI-based health of your finances</span>
+        <div class="progress mt-1" style="height:6px; max-width:200px;">
+          <div class="progress-bar bg-<?= $scoreColor ?>" role="progressbar" style="width: <?= $score ?>%;"></div>
+        </div>
+        <small class="text-muted">Health Score: <?= $score ?>/100</small>
       </div>
       <div class="d-flex flex-wrap gap-2 mt-2">
         <div class="stat-card">
@@ -132,13 +139,20 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
       <div class="glass">
         <div class="mb-2"><span class="fw-bold">Banks:</span></div>
         <ul class="list-unstyled mb-0">
-        <?php foreach($banks as $b): ?>
-          <li>
-            <span class="fw-bold"><?= htmlspecialchars($b['name']) ?>:</span>
-            <span class="<?= $b['type']=='bank' ? 'text-success':'text-danger' ?>">
-              <?= ($b['type']=='bank' ? '' : '-') . number_format($b['balance'],2) ?>€
-            </span>
-            <small class="text-muted">(<?= ucfirst($b['type']) ?>)</small>
+        <?php foreach($banks as $b):
+              $total = $totals[$b['type']] ?: 1;
+              $width = min(100, abs($b['balance']) / $total * 100);
+        ?>
+          <li class="mb-2">
+            <div class="d-flex justify-content-between">
+              <span class="fw-bold"><?= htmlspecialchars($b['name']) ?></span>
+              <span class="<?= $b['type']=='bank' ? 'text-success':'text-danger' ?>">
+                <?= ($b['type']=='bank' ? '' : '-') . number_format($b['balance'],2) ?>€
+              </span>
+            </div>
+            <div class="progress" style="height:4px;">
+              <div class="progress-bar <?= $b['type']=='bank' ? 'bg-success':'bg-danger' ?>" style="width:<?= $width ?>%"></div>
+            </div>
           </li>
         <?php endforeach; ?>
         </ul>
@@ -158,6 +172,10 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
             <?php endfor; ?>
           </select>
         </form>
+        <?php $progress = $payoff['goal_total'] > 0 ? (1 - $payoff['card_owed'] / $payoff['goal_total']) * 100 : 100; ?>
+        <div class="progress mb-2" style="height:6px;">
+          <div class="progress-bar bg-danger" role="progressbar" style="width:<?= max(0,$progress) ?>%"></div>
+        </div>
         <div>
           <span class="fw-bold">Monthly Target:</span>
           <span><?= number_format($payoff['goal_monthly'],2) ?>€</span>
@@ -165,6 +183,10 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
         <div>
           <span class="fw-bold">To be card-debt free by:</span>
           <span><?= htmlspecialchars($payoff['free_day']) ?></span>
+        </div>
+        <div>
+          <span class="fw-bold">Months Left:</span>
+          <span><?= $payoff['months_left'] ?></span>
         </div>
         <div>
           <span class="fw-bold">Total Owed:</span>
@@ -202,7 +224,8 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
   <!-- Financial Advisor Widget -->
   <div class="glass mb-4">
     <h4 class="fw-bold mb-3">AI Financial Advisor 🤖</h4>
-    <ul>
+    <p><?= nl2br(h($advice)) ?></p>
+    <ul class="mt-3">
       <?php if($payoff['goal_monthly']>0): ?>
       <li>To clear your credit card in <strong><?= $payoff['plan_months'] ?> month<?= $payoff['plan_months']>1?'s':'' ?></strong>, pay at least <strong><?= number_format($payoff['goal_monthly'],2) ?>€</strong> per month (next payoff date: <strong><?= htmlspecialchars($payoff['free_day']) ?></strong>).</li>
       <?php else: ?>
@@ -211,13 +234,11 @@ body.dark-mode .big-cat { background:#1e293b; color:#fbbf24;}
       <?php if($score < 65): ?>
       <li>⚠️ <strong>Tip:</strong> Reduce spending in <span class="big-cat"><?= htmlspecialchars($biggest_cat) ?></span> to improve your financial health.</li>
       <?php endif; ?>
-      <li>Your current net for <?= htmlspecialchars($thisMonth) ?> is <strong><?= number_format($summary['net'],2) ?>€</strong>.</li>
-      <li>Try to keep your monthly net positive and keep at least 10% of your income as savings.</li>
       <?php if($summary['pending']>0): ?>
       <li>⏳ You have <strong><?= $summary['pending'] ?></strong> pending transactions – mark them reflected once processed!</li>
       <?php endif; ?>
     </ul>
-    <div class="tiny-tip">The advisor uses your data and typical German financial best practices.</div>
+    <div class="tiny-tip">Advice is generated locally using your recent data.</div>
   </div>
 
   <div class="glass mb-3">

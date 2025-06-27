@@ -341,15 +341,56 @@ function get_card_payoff_plan($uid) {
     $total_card = $totals['credit_card'];
     $plan_months = intval(get_setting($uid, 'cc_pay_plan', 3));
     $goal_monthly = $total_card > 0 ? ceil($total_card / max(1, $plan_months)) : 0;
-    $cc_free_day = $total_card > 0 ? date('Y-m-d', strtotime("+".($plan_months*30)." days")) : date('Y-m-d');
+    $months_left  = $goal_monthly > 0 ? ceil($total_card / $goal_monthly) : 0;
+    $cc_free_day = $total_card > 0 ? date('Y-m-d', strtotime("+".($months_left*30)." days")) : date('Y-m-d');
     return [
         'plan_months'=>$plan_months,
         'goal_monthly'=>$goal_monthly,
         'goal_total'=>$total_card,
-        'months_left'=>$plan_months,
+        'months_left'=>$months_left,
         'free_day'=>$cc_free_day,
         'card_owed'=>$total_card,
     ];
+}
+
+// ---- AI ADVICE ----
+function get_ai_advice($uid) {
+    $summary = get_monthly_summary($uid, date('Y-m'));
+    $score   = get_health_score($uid);
+
+    $tips = [];
+
+    // Tip based on health score
+    if ($score >= 80) {
+        $tips[] = 'Great job maintaining a high financial health score.';
+    } elseif ($score >= 60) {
+        $tips[] = 'Your finances look decent; see if you can push that score even higher.';
+    } else {
+        $tips[] = 'Focus on reducing debts and building savings to lift your health score.';
+    }
+
+    // Net income evaluation
+    if ($summary['net'] < 0) {
+        $tips[] = 'Expenses exceed income this month. Consider cutting back discretionary costs.';
+    } else {
+        $tips[] = 'You earned more than you spent. Transfer part of that surplus to savings.';
+    }
+
+    // Major spending category hint
+    if (!empty($summary['biggest'])) {
+        $tips[] = 'Major spending noted in '.htmlspecialchars($summary['biggest']).'. Review for possible savings.';
+    }
+
+    $generic = [
+        'Automate a monthly transfer to your savings account.',
+        'Review any unused subscriptions and cancel them.',
+        'Keep track of all expenses to identify spending patterns.',
+        'Build an emergency fund covering three months of expenses.'
+    ];
+    shuffle($generic);
+    $tips[] = array_shift($generic);
+
+    return implode("\n", array_slice($tips, 0, 3));
 }
 
 // ---- UPCOMING RECURRING ----
@@ -485,6 +526,10 @@ function async_get_health_score(int $uid): Future {
 
 function async_get_card_payoff_plan(int $uid): Future {
     return async(fn() => get_card_payoff_plan($uid));
+}
+
+function async_get_ai_advice(int $uid): Future {
+    return async(fn() => get_ai_advice($uid));
 }
 
 function async_get_all_balances(int $uid): Future {
