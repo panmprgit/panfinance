@@ -340,16 +340,30 @@ function get_card_payoff_plan($uid) {
     list($totals,,) = get_all_balances($uid);
     $total_card = $totals['credit_card'];
     $plan_months = intval(get_setting($uid, 'cc_pay_plan', 3));
-    $goal_monthly = $total_card > 0 ? ceil($total_card / max(1, $plan_months)) : 0;
+
+    // Track the starting balance when plan is set to properly show progress
+    $start_total = (float) get_setting($uid, 'cc_start_total', $total_card);
+    if ($start_total == 0 && $total_card > 0) {
+        $start_total = $total_card;
+        set_setting($uid, 'cc_start_total', $start_total);
+    }
+    // If debt increased beyond the starting point, update the starting total
+    if ($total_card > $start_total) {
+        $start_total = $total_card;
+        set_setting($uid, 'cc_start_total', $start_total);
+    }
+
+    $goal_monthly = $start_total > 0 ? ceil($start_total / max(1, $plan_months)) : 0;
     $months_left  = $goal_monthly > 0 ? ceil($total_card / $goal_monthly) : 0;
     $cc_free_day = $total_card > 0 ? date('Y-m-d', strtotime("+".($months_left*30)." days")) : date('Y-m-d');
+
     return [
-        'plan_months'=>$plan_months,
-        'goal_monthly'=>$goal_monthly,
-        'goal_total'=>$total_card,
-        'months_left'=>$months_left,
-        'free_day'=>$cc_free_day,
-        'card_owed'=>$total_card,
+        'plan_months' => $plan_months,
+        'goal_monthly' => $goal_monthly,
+        'goal_total'   => $start_total,
+        'months_left'  => $months_left,
+        'free_day'     => $cc_free_day,
+        'card_owed'    => $total_card,
     ];
 }
 

@@ -3,6 +3,17 @@ require_once 'functions.php';
 require_login();
 date_default_timezone_set('Europe/Berlin');
 
+// Handle updates to the credit card payoff plan
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_plan'])) {
+    $plan = max(1, min(12, intval($_POST['pay_plan'])));
+    set_setting($_SESSION['user_id'], 'cc_pay_plan', $plan);
+    // Record starting balance for progress tracking
+    list($totals,,) = get_all_balances($_SESSION['user_id']);
+    set_setting($_SESSION['user_id'], 'cc_start_total', $totals['credit_card']);
+    header('Location: index.php');
+    exit();
+}
+
 // Get summary and data
 $user_id = $_SESSION['user_id'];
 $userF = async_get_user($user_id);
