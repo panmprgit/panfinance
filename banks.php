@@ -55,10 +55,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <style>
-body { background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%);}
-.glass { background: rgba(255,255,255,0.88); border-radius: 1.2em; box-shadow: 0 4px 24px rgb(0 0 0 / 0.08); padding: 2em 1.5em 2em; margin-bottom: 2em;}
-.card-bank {min-width:250px;max-width:360px;background:rgba(255,255,255,0.9);border-radius:1.5em;box-shadow:0 2px 10px #0001;padding:1.5em 1.5em 1em;margin-bottom:2em;transition:box-shadow .2s;}
+body {
+  background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+body.dark-mode {
+  background: linear-gradient(135deg,#161b22 0%,#222a3f 100%);
+  color: #ddd;
+}
+.glass {
+  background: rgba(255,255,255,0.92);
+  border-radius: 1.2em;
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.08);
+  padding: 1.5em 1.5em 2em;
+  margin-bottom: 2em;
+  backdrop-filter: blur(8px);
+  transition: box-shadow 0.3s ease;
+}
+body.dark-mode .glass {
+  background: rgba(30,35,48,0.93);
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.32);
+}
+.card-bank {
+  min-width:250px;
+  max-width:360px;
+  background:rgba(255,255,255,0.9);
+  border-radius:1.5em;
+  box-shadow:0 2px 10px #0001;
+  padding:1.5em 1.5em 1.2em;
+  margin-bottom:2em;
+  transition:box-shadow .3s ease;
+  backdrop-filter: blur(4px);
+}
 .card-bank:hover {box-shadow:0 4px 24px #3b82f630;}
+body.dark-mode .card-bank {
+  background: rgba(30,35,48,0.9);
+  box-shadow: 0 2px 10px #0004;
+  color: #e2e8f0;
+}
 .cc-icon {font-size:1.5em;vertical-align:middle;margin-right:0.5em;}
 .badge-bank {background:#22d3ee;color:#0369a1;}
 .badge-card {background:#fbbf24;color:#92400e;}
@@ -67,7 +102,7 @@ body { background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%);}
 <body>
 <?php include 'navbar.php'; ?>
 
-<div class="container py-3">
+<div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Banks & Credit Cards 🏦</h2>
     <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addBankModal">+ Add Account</button>
@@ -172,12 +207,17 @@ body { background: linear-gradient(135deg,#e0f2fe 0%,#fef9c3 100%);}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.querySelectorAll('.edit-bank-btn').forEach(btn => {
-  btn.addEventListener('click', e => {
+  btn.addEventListener('click', () => {
     document.getElementById('edit-bank-id').value = btn.dataset.id;
     document.getElementById('edit-bank-name').value = btn.dataset.name;
     document.getElementById('edit-bank-type').value = btn.dataset.type;
     document.getElementById('edit-bank-balance').value = btn.dataset.balance;
   });
+});
+document.addEventListener('DOMContentLoaded', function(){
+  if(localStorage.getItem('darkMode')==='1'){
+    document.body.classList.add('dark-mode');
+  }
 });
 </script>
 </body>
