@@ -78,8 +78,7 @@ body.dark-mode .glass {
   box-shadow: 0 4px 24px rgb(0 0 0 / 0.32);
 }
 .card-bank {
-  min-width:250px;
-  max-width:360px;
+  width:100%;
   background:rgba(255,255,255,0.9);
   border-radius:1.5em;
   box-shadow:0 2px 10px #0001;
@@ -94,7 +93,10 @@ body.dark-mode .card-bank {
   box-shadow: 0 2px 10px #0004;
   color: #e2e8f0;
 }
-.cc-icon {font-size:1.5em;vertical-align:middle;margin-right:0.5em;}
+.bank-head{display:flex;align-items:center;gap:.75em;}
+.bank-actions{margin-left:auto;}
+.bank-icon{font-size:2em;line-height:1;}
+.cc-icon{font-size:2em;line-height:1;}
 .badge-bank {background:#22d3ee;color:#0369a1;}
 .badge-card {background:#fbbf24;color:#92400e;}
 </style>
@@ -109,20 +111,20 @@ body.dark-mode .card-bank {
   </div>
   <div class="row">
     <?php foreach($bank_list as $b): ?>
-      <div class="col-md-4 col-12">
+      <div class="col-12">
         <div class="card-bank glass mb-4">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div>
-              <span class="<?= $b['type']=='credit_card'?'cc-icon':'bank-icon' ?>">
-                <?= $b['type']=='credit_card' ? '💳' : '🏦' ?>
-              </span>
-              <span class="fw-bold"><?= htmlspecialchars($b['name']) ?></span>
+          <div class="bank-head">
+            <span class="bank-icon <?= $b['type']=='credit_card'?'cc-icon':'bank-icon' ?>">
+              <?= $b['type']=='credit_card' ? '💳' : '🏦' ?>
+            </span>
+            <div class="flex-grow-1">
+              <div class="fw-bold mb-1"><?= htmlspecialchars($b['name']) ?></div>
               <span class="badge <?= $b['type']=='credit_card'?'badge-card':'badge-bank' ?>">
                 <?= $b['type']=='credit_card' ? 'Credit Card' : 'Bank' ?>
               </span>
             </div>
-            <div>
-              <button class="btn btn-sm btn-primary edit-bank-btn" 
+            <div class="bank-actions">
+              <button class="btn btn-sm btn-primary edit-bank-btn"
                 data-id="<?= $b['id'] ?>"
                 data-name="<?= htmlspecialchars($b['name'], ENT_QUOTES) ?>"
                 data-type="<?= $b['type'] ?>"
@@ -137,7 +139,7 @@ body.dark-mode .card-bank {
               </form>
             </div>
           </div>
-          <div class="display-6 <?= $b['type']=='credit_card'?'text-danger':'text-success' ?>">
+          <div class="bank-balance display-6 <?= $b['type']=='credit_card'?'text-danger':'text-success' ?> mt-3">
             <?= $b['type']=='credit_card' ? 'Owed: ' : 'Balance: ' ?>
             €<?= number_format($b['balance'],2) ?>
           </div>
