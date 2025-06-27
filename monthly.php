@@ -384,6 +384,59 @@ body.dark-mode .table tbody tr:hover {
   </div>
 </div>
 
+<!-- Add Recurring Modal -->
+<div class="modal fade" id="addRecurModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="post" class="modal-content">
+      <input type="hidden" name="add_recur" value="1" />
+      <div class="modal-header">
+        <h5 class="modal-title">Add Recurring Transaction</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label>Description</label>
+        <input type="text" name="description" class="form-control" required list="desc-list" autocomplete="off" />
+        <label class="mt-3">Amount</label>
+        <input type="number" name="amount" step="0.01" class="form-control" required />
+        <label class="mt-3">Type</label>
+        <select name="type" class="form-select" required>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <label class="mt-3">Bank</label>
+        <select name="bank_id" class="form-select" required>
+          <?php foreach($bank_list as $b): ?>
+          <option value="<?= $b['id'] ?>"
+            <?php if($filter_bank && $b['id'] == $filter_bank) echo 'selected'; else if(!$filter_bank && $default_bank && $b['id'] == $default_bank) echo 'selected'; ?>>
+            <?= htmlspecialchars($b['name']) ?></option>
+          <?php endforeach; ?>
+        </select>
+        <label class="mt-3">Start Date</label>
+        <input type="date" name="start_date" class="form-control" required />
+        <label class="mt-3">End Date (optional)</label>
+        <input type="date" name="end_date" class="form-control" />
+        <label class="mt-3">Repeat on (weekdays)</label>
+        <div>
+          <?php
+          $days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+          foreach($days as $i=>$d): ?>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="days_of_week[]" value="<?= ($i+1)%7 ?>" id="add-dow<?= ($i+1)%7 ?>" />
+            <label class="form-check-label" for="add-dow<?= ($i+1)%7 ?>"><?= $d ?></label>
+          </div>
+          <?php endforeach; ?>
+        </div>
+        <label class="mt-3">or every month on day</label>
+        <input type="number" name="day_of_month" min="1" max="31" class="form-control" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary">Add Recurring</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Edit Recurring Modal -->
 <div class="modal fade" id="editRecurModal" tabindex="-1">
   <div class="modal-dialog">
