@@ -280,9 +280,21 @@ function get_monthly_summary($uid, $month = null) {
         'Home'=>0.0, 'Groceries'=>0.0, 'Fun'=>0.0, 'Transport'=>0.0, 'Health'=>0.0, 'Other'=>0.0
     ];
     $income = 0; $expense = 0; $net = 0;
+    $pending = 0; $scheduled = 0; $overdue = 0;
+    $today = strtotime(date('Y-m-d'));
     foreach ($transactions as $tr) {
         $isInBal = $tr['already_in_balance']==1;
         $isReflected = !$isInBal;
+        $trDate = strtotime($tr['date']);
+        // Track scheduling status for transactions not already in starting balance
+        if (!$isInBal) {
+            if ($trDate > $today) {
+                $scheduled++;
+            } else {
+                $pending++;
+                if ($trDate < $today) $overdue++;
+            }
+        }
         // Categories (for reflected only)
         if ($isReflected && $tr['type']=='expense') {
             $cat = categorize($tr['description']);
@@ -303,6 +315,9 @@ function get_monthly_summary($uid, $month = null) {
         'income'=>$income,
         'expense'=>$expense,
         'net'=>$net,
+        'pending'=>$pending,
+        'scheduled'=>$scheduled,
+        'overdue'=>$overdue,
     ];
 }
 
